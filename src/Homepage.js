@@ -10,12 +10,17 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  BottomNavigation,
+  BottomNavigationAction,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import HomeIcon from "@mui/icons-material/Home";
+import PowerIcon from "@mui/icons-material/Power"; // Updated Sync Devices Icon
 
 export default function HomePage({ navigate }) {
   const [showDetails, setShowDetails] = useState(false);
+  const [value, setValue] = useState(0);
 
   // Simulated weekly CO2 emission data
   const thisWeekEmissions = {
@@ -123,6 +128,30 @@ export default function HomePage({ navigate }) {
           </Button>
         </Box>
       </Paper>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation
+        showLabels
+        value={value}
+        onChange={(event, newValue) => {
+          if (newValue === 0) {
+            navigate("home"); // Home navigation
+          }
+          setValue(newValue); // Prevents navigation for Sync Devices
+        }}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          background: "#ffffff",
+          boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
+          zIndex: 1000,
+        }}
+      >
+        <BottomNavigationAction label="Home" icon={<HomeIcon />} />
+        <BottomNavigationAction label="Sync Devices" icon={<PowerIcon />} />
+      </BottomNavigation>
     </Container>
   );
 }

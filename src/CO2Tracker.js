@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Typography, Paper, Box } from "@mui/material";
+import {
+  Button,
+  Container,
+  Typography,
+  Paper,
+  Box,
+  BottomNavigation,
+  BottomNavigationAction,
+} from "@mui/material";
 import { useMediaQuery } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import PowerIcon from "@mui/icons-material/Power";
 import { predictAIEmissions } from "./co2Prediction";
 
 export default function CO2Tracker({ navigate }) {
@@ -10,6 +20,7 @@ export default function CO2Tracker({ navigate }) {
   const [emission, setEmission] = useState(null);
   const [isTracking, setIsTracking] = useState(false);
   const [startCoords, setStartCoords] = useState(null);
+  const [value, setValue] = useState(0);
   const [co2History, setCo2History] = useState(() => {
     return JSON.parse(localStorage.getItem("co2History")) || {};
   });
@@ -141,10 +152,33 @@ export default function CO2Tracker({ navigate }) {
             fullWidth
             onClick={() => setIsTracking((prev) => !prev)}
           >
-            {isTracking ? "Stop Tracking" : "Start Tracking"}
+            {isTracking ? "Stop Tracking" : "Analyze"}
           </Button>
         </Box>
       </Paper>
+      {/* Bottom Navigation */}
+      <BottomNavigation
+        showLabels
+        value={value}
+        onChange={(event, newValue) => {
+          if (newValue === 0) {
+            navigate("home"); // Home navigation
+          }
+          setValue(newValue); // Prevents navigation for Sync Devices
+        }}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          background: "#ffffff",
+          boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
+          zIndex: 1000,
+        }}
+      >
+        <BottomNavigationAction label="Home" icon={<HomeIcon />} />
+        <BottomNavigationAction label="Sync Devices" icon={<PowerIcon />} />
+      </BottomNavigation>
     </Container>
   );
 }
