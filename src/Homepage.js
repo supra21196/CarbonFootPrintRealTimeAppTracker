@@ -1,157 +1,177 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Container,
-  Typography,
-  Paper,
-  Box,
-  Collapse,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  BottomNavigation,
-  BottomNavigationAction,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import HomeIcon from "@mui/icons-material/Home";
-import PowerIcon from "@mui/icons-material/Power"; // Updated Sync Devices Icon
+import React from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { CircleCheck, Menu } from "lucide-react";
+import styled from "styled-components";
 
-export default function HomePage({ navigate }) {
-  const [showDetails, setShowDetails] = useState(false);
-  const [value, setValue] = useState(0);
+const data = [
+  { name: "Electricity Usage", value: 30, color: "#F87171" },
+  { name: "Solar Energy", value: 40, color: "#4ADE80" },
+  { name: "Transportation", value: 15, color: "#FACC15" },
+  { name: "Home Appliances", value: 15, color: "#60A5FA" },
+];
 
-  // Simulated weekly CO2 emission data
-  const thisWeekEmissions = {
-    Monday: 2.1,
-    Tuesday: 3.2,
-    Wednesday: 1.8,
-    Thursday: 2.5,
-    Friday: 3.9,
-    Saturday: 2.3,
-    Sunday: 1.5,
-  };
+const PageWrapper = styled.div`
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+`;
 
-  const lastWeekEmissions = {
-    Monday: 2.5,
-    Tuesday: 2.8,
-    Wednesday: 1.9,
-    Thursday: 2.2,
-    Friday: 4.0,
-    Saturday: 2.1,
-    Sunday: 1.8,
-  };
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 16px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1a1a1a;
+`;
 
-  // Calculate total emissions for this week and last week
-  const totalThisWeek = Object.values(thisWeekEmissions).reduce(
-    (a, b) => a + b,
-    0
-  );
-  const totalLastWeek = Object.values(lastWeekEmissions).reduce(
-    (a, b) => a + b,
-    0
-  );
+const MenuIcon = styled(Menu)`
+  cursor: pointer;
+  color: #1a1a1a;
+`;
 
-  // Calculate the increase or decrease in emissions
-  const difference = (totalThisWeek - totalLastWeek).toFixed(2);
-  const trend = difference >= 0 ? "Increased" : "Decreased";
+const Container = styled.div`
+  max-width: 400px;
+  width: 100%;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Arial", sans-serif;
+  min-height: 80vh; /* Adjust height of the container */
+  display: flex;
+  flex-direction: column;
+`;
 
+const ChartContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Title = styled.h2`
+  font-size: 1.5rem;
+  font-weight: bold;
+`;
+
+const Subtitle = styled.p`
+  color: #6b7280;
+  font-size: 1rem;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 24px;
+`;
+
+const StatusContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+`;
+
+const StatusItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const StatusLabel = styled.p`
+  font-weight: 600;
+  font-size: 1rem;
+`;
+
+const StatusText = styled.p`
+  font-size: 0.875rem;
+  color: #6b7280;
+`;
+
+const GoalContainer = styled.div`
+  text-align: right;
+`;
+
+const GoalText = styled.p`
+  font-weight: 600;
+`;
+
+const GoalPercentage = styled.span`
+  color: #17a86b;
+`;
+
+const ProgressBar = styled.div`
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 999px;
+  height: 8px;
+  margin-top: 4px;
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div`
+  background-color: #17a86b;
+  height: 100%;
+  border-radius: 999px;
+`;
+
+export default function EcoTrackDashboard() {
   return (
-    <Container maxWidth="md" style={{ textAlign: "center", padding: "40px" }}>
-      <Paper
-        elevation={3}
-        style={{ padding: "30px", borderRadius: "12px", background: "#f5f5f5" }}
-      >
-        <Typography
-          variant="h3"
-          style={{ fontWeight: "bold", color: "#2c3e50" }}
-        >
-          Welcome to CO₂ Tracker
-        </Typography>
-        <Typography variant="h6" style={{ marginTop: "10px", color: "#555" }}>
-          Track your carbon footprint and participate in eco-friendly
-          challenges.
-        </Typography>
+    <PageWrapper>
+      {/* Header with Hi, Sarah and Burger Menu */}
+      <HeaderContainer>
+        <span>Hi, Sarah 👋</span>
+        <MenuIcon size={28} />
+      </HeaderContainer>
 
-        {/* Dashboard Section */}
-        <Box marginTop="30px">
-          <Typography
-            variant="h5"
-            style={{ fontWeight: "bold", color: "#388e3c" }}
-          >
-            🌍 Total CO₂ Emission This Week: {totalThisWeek.toFixed(2)} kg
-          </Typography>
-          <Typography
-            variant="h6"
-            style={{ color: trend === "Increased" ? "#d32f2f" : "#388e3c" }}
-          >
-            {trend} by {Math.abs(difference)} kg from last week
-          </Typography>
-
-          {/* Toggle Breakdown */}
-          <IconButton
-            onClick={() => setShowDetails(!showDetails)}
-            style={{ marginTop: "10px" }}
-          >
-            {showDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-
-          <Collapse in={showDetails}>
-            <List>
-              {Object.keys(thisWeekEmissions).map((day) => (
-                <ListItem key={day}>
-                  <ListItemText
-                    primary={day}
-                    secondary={`CO₂ Emission: ${thisWeekEmissions[day]} kg`}
-                  />
-                </ListItem>
+      {/* White Container */}
+      <Container>
+        <Subtitle>Welcome to EcoTrack! 🌍</Subtitle>
+        <ChartTitle>CO₂ Footprint Breakdown</ChartTitle>
+        <ResponsiveContainer width="100%" height={220}>
+          <PieChart>
+            <Pie
+              data={data}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={3}
+              dataKey="value"
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
-            </List>
-          </Collapse>
-        </Box>
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
 
-        {/* Start Tracking Button */}
-        <Box display="flex" justifyContent="center" marginTop="20px">
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            style={{
-              padding: "12px 24px",
-              fontSize: "18px",
-              borderRadius: "8px",
-            }}
-            onClick={() => navigate("tracker")}
-          >
-            Start Tracking
-          </Button>
-        </Box>
-      </Paper>
+        <StatusContainer>
+          <StatusItem>
+            <CircleCheck color="#17A86B" />
+            <div>
+              <StatusLabel>Status</StatusLabel>
+              <StatusText>Currently Tracking</StatusText>
+            </div>
+          </StatusItem>
 
-      {/* Bottom Navigation */}
-      <BottomNavigation
-        showLabels
-        value={value}
-        onChange={(event, newValue) => {
-          if (newValue === 0) {
-            navigate("home"); // Home navigation
-          }
-          setValue(newValue); // Prevents navigation for Sync Devices
-        }}
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          width: "100%",
-          background: "#ffffff",
-          boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
-          zIndex: 1000,
-        }}
-      >
-        <BottomNavigationAction label="Home" icon={<HomeIcon />} />
-        <BottomNavigationAction label="Sync Devices" icon={<PowerIcon />} />
-      </BottomNavigation>
-    </Container>
+          <GoalContainer>
+            <GoalText>
+              Weekly Goal <GoalPercentage>78%</GoalPercentage>
+            </GoalText>
+            <ProgressBar>
+              <ProgressFill style={{ width: "78%" }} />
+            </ProgressBar>
+          </GoalContainer>
+        </StatusContainer>
+      </Container>
+    </PageWrapper>
   );
 }

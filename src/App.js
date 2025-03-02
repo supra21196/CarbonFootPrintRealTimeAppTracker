@@ -1,12 +1,13 @@
+import "./styles.css";
 import React, { useState } from "react";
-import { Button, Container } from "@mui/material";
-import HomePage from "./Homepage";
-import CO2Tracker from "./CO2Tracker";
-import SyncDevices from "./SyncDevices";
-import EarnPoints from "./EarnPoints";
+import { Container } from "@mui/material";
+import SplashScreen from "./SplashScreen";
+import Homepage from "./Homepage";
+import ActivitiesPage from "./ActivitiesPage";
+import BottomNav from "./BottomNav"; // Import Bottom Navigation
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState("home");
+  const [currentPage, setCurrentPage] = useState("splash"); // Start with SplashScreen
 
   return (
     <Container
@@ -17,12 +18,20 @@ export default function App() {
         margin: "0 auto",
         minHeight: "100vh",
         backgroundColor: "#f4f4f4",
+        position: "relative",
+        paddingBottom: "90px", // Space for BottomNav
       }}
     >
-      {currentPage === "home" ? (
-        <HomePage navigate={setCurrentPage} />
+      {currentPage === "splash" ? (
+        <SplashScreen navigate={setCurrentPage} />
       ) : (
-        <CO2Tracker navigate={setCurrentPage} />
+        <>
+          {currentPage === "home" && <Homepage navigate={setCurrentPage} />}
+          {currentPage === "activities" && (
+            <ActivitiesPage navigate={setCurrentPage} />
+          )}
+          <BottomNav activePage={currentPage} navigate={setCurrentPage} />
+        </>
       )}
     </Container>
   );
